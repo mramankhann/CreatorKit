@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Pagination } from "../components/ui/Pagination";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { setOnboardingCompleted } from "../services/authService";
 
 import { Step1SaveVideo } from "../components/onboarding/Step1SaveVideo";
 import { Step2AIBios } from "../components/onboarding/Step2AIBios";
@@ -28,7 +29,9 @@ export default function Onboard() {
       flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
       setCurrentIndex(nextIndex);
     } else {
-      router.replace("/(tabs)" as any);
+      setOnboardingCompleted().then(() => {
+        router.replace("/(tabs)" as any);
+      });
     }
   };
 

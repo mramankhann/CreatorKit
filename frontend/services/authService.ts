@@ -60,3 +60,12 @@ export const getStoredUser = async (): Promise<AuthUser | null> => {
 export const logout = async (): Promise<void> => {
   await AsyncStorage.removeItem('user');
 };
+
+export const getOnboardingStatus = async (): Promise<boolean> => {
+  const status = await AsyncStorage.getItem('onboarding_completed');
+  return status === 'true';
+};
+
+export const setOnboardingCompleted = async (): Promise<void> => {
+  await AsyncStorage.setItem('onboarding_completed', 'true');
+};

@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Dimensions, ActivityIndicator } from "rea
 import { Button } from "../ui/Button";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { continueAsGuest } from "../../services/authService";
+import { continueAsGuest, setOnboardingCompleted } from "../../services/authService";
 
 const { width } = Dimensions.get("window");
 
@@ -15,22 +15,30 @@ export function Step3AllSet({ onNext, onSkip }: StepProps) {
   const router = useRouter();
   const [guestLoading, setGuestLoading] = useState(false);
 
-  const handleGuest = async () => {
+  const handleFinishOnboarding = async (path: string) => {
     try {
-      setGuestLoading(true);
-      await continueAsGuest();
-    } catch {
-      // still proceed as guest even if API fails
+      await setOnboardingCompleted();
+      if (path === '/(tabs)') {
+        setGuestLoading(true);
+        await continueAsGuest();
+        router.replace(path as any);
+      } else {
+        router.push(path as any);
+      }
+    } catch (error) {
+      console.error("Failed to finish onboarding:", error);
+      router.push(path as any);
     } finally {
       setGuestLoading(false);
-      router.replace("/(tabs)" as any);
     }
   };
+
+  const handleGuest = () => handleFinishOnboarding('/(tabs)');
 
   return (
     <View style={{ width }} className="px-6 flex-1 justify-between pb-4">
       <View>
-        <View className="w-full h-[260px] bg-[#F5F4EE] rounded-[32px] items-center justify-center mb-10">
+        <View className="w-full h-[260px] bg-[#FFF] rounded-[32px] items-center justify-center mb-10">
           <View className="items-center justify-center w-24 h-24">
             <Text style={{ fontSize: 64 }}>🚀</Text>
           </View>
@@ -46,8 +54,8 @@ export function Step3AllSet({ onNext, onSkip }: StepProps) {
       </View>
 
       <View>
-        <Button title="Sign up with email" onPress={() => router.push("/signup" as any)} className="mb-3" />
-        <Button title="Already have an account" variant="outline" onPress={() => router.push("/signin" as any)} />
+        <Button title="Sign up with email" onPress={() => handleFinishOnboarding("/signup")} className="mb-3" />
+        <Button title="Already have an account" variant="outline" onPress={() => handleFinishOnboarding("/signin")} />
         
         <TouchableOpacity onPress={handleGuest} disabled={guestLoading} className="mt-5 items-center">
           {guestLoading ? (

@@ -1,7 +1,7 @@
 // Centralized API config
 // Uses local network IP so physical devices/emulators can reach the PC backend.
 // If you change Wi-Fi networks, run `ipconfig` again and update this IP.
-export const API_BASE_URL = 'http://10.15.80.102:5000/api';
+export const API_BASE_URL = 'https://creatorkit-bhuv.onrender.com/api';
 
 export const AUTH_ENDPOINTS = {
   signup: `${API_BASE_URL}/auth/signup`,
